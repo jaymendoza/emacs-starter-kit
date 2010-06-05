@@ -34,7 +34,7 @@
      (add-hook 'clojure-mode-hook 'swank-clojure-slime-mode-hook t)))
 
 ;; needed for overriding default method for invoking slime
-(ad-activate 'slime-read-interactive-args)
+;; (ad-activate 'slime-read-interactive-args)
 
 ;; paredit
 (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
