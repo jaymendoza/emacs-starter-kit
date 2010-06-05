@@ -1,0 +1,109 @@
+* Swank Clojure
+
+Swank-clojure is an adapter that lets you use SLIME (the Superior Lisp
+Interaction Mode for Emacs) with Clojure. Some of the things written
+below are nice to have, but not strictly necessary (like fuzzy completion,
+paredit, extra-vm-arguments etc). They are straight pasted from my own
+configuration.
+
+Installation
+
+1. Install clojure-mode.el from [1].
+        
+2. Get SLIME. I use the git mirror of the official CVS repo at [2].
+
+3. Open ~/.emacs and add the following lines:
+
+a. Setup clojure-mode
+
+;; clojure mode
+(add-to-list 'load-path "~/src/clojure-mode")
+(require 'clojure-mode)
+
+b. setup slime
+
+;; slime
+(add-to-list 'load-path "~/src/slime")
+
+(eval-after-load "slime"
+  '(progn
+     (setq slime-use-autodoc-mode nil)
+     (slime-setup '(slime-repl
+		    slime-fancy
+		    slime-fuzzy
+		    slime-banner))
+     (setq slime-complete-symbol*-fancy t)
+     (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)))
+
+(require 'slime)
+
+c. setup swank
+
+;; swank-clojure
+(add-to-list 'load-path "~/src/swank-clojure")
+
+(setq  swank-clojure-classpath (append (list "/usr/share/java/clojure.jar")
+				       (directory-files "/usr/share/java/"
+							t
+							".jar$")
+				       (list "~/src/swank-clojure/src")))
+
+(setq swank-clojure-extra-vm-args (list "-server"
+					"-Djava.net.preferIPv4Stack=true"
+					"-Xms256m"
+					"-Xmx1024m"
+					"-XX:CompileThreshold=1500"
+					"-XX:+UseConcMarkSweepGC"
+					"-XX:+UseParNewGC"
+					"-XX:+ExplicitGCInvokesConcurrent"
+					"-XX:+CMSClassUnloadingEnabled"
+					"-XX:MaxPermSize=250m"
+					"-XX:+UseAdaptiveSizePolicy"
+					"-XX:+AggressiveOpts"
+					"-XX:+UseFastAccessorMethods"
+					"-XX:+UseFastEmptyMethods"
+					"-XX:+UseFastJNIAccessors"
+					"-Xverify:none"
+					"-XX:+UseCompressedOops"))
+
+(eval-after-load "slime"
+  '(progn
+     (require 'swank-clojure)
+     (add-to-list 'slime-lisp-implementations `(clojure ,(swank-clojure-cmd) :init swank-clojure-init) t)
+     (add-hook 'slime-indentation-update-hooks 'swank-clojure-update-indentation)
+     (add-hook 'slime-repl-mode-hook 'swank-clojure-slime-repl-modify-syntax t)
+     (add-hook 'clojure-mode-hook 'swank-clojure-slime-mode-hook t)))
+
+;; needed for overriding default method for invoking slime
+(ad-activate 'slime-read-interactive-args)
+
+4. Optionally, if you want paredit (which is highly recommended, but it
+   requires a bit of initial learning, as with other emacs tools), then
+   add the following lines too:
+
+;; paredit
+(autoload 'paredit-mode "paredit"
+  "Minor mode for pseudo-structurally editing Lisp code." t)
+(add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
+(add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
+(add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
+(add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
+
+5. If you want to use SLIME with Common Lisp or another Lisp
+   implementation, add your default lisp back in:
+
+;; Example for sbcl to put in your .emacs:
+(add-to-list 'slime-lisp-implementations '(sbcl ("sbcl")))
+
+   Add the above line before the ad-activate function above.
+   
+5. Start slime!
+
+    M-x slime
+
+  Or if you have alternate implementations configured:
+
+    M-- M-x slime clojure
+
+[1] - http://github.com/technomancy/clojure-mode.git
+[2] - git://git.boinkor.net/slime.git
