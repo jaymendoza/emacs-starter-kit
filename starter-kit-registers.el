@@ -11,6 +11,8 @@
 (dolist (r `((?i (file . ,(concat dotfiles-dir "init.el")))
              (?b (file . ,(concat dotfiles-dir "starter-kit-bindings.el")))
              (?r (file . ,(concat dotfiles-dir "starter-kit-registers.el")))
+             (?c (file . "~/code/caa/next/v2.md"))
+             (?g (file . ,(concat dotfiles-dir "jay/gui.el")))
              (?j (file . ,(concat dotfiles-dir "jay.el")))))
   (set-register (car r) (cadr r)))
 
