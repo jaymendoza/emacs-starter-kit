@@ -4,8 +4,8 @@
 (set-face-attribute 'default nil :font "Terminus-12")
 
 ;; set frame size
-(add-to-list 'default-frame-alist '(height . 62))
-(add-to-list 'default-frame-alist '(width . 188))
+(add-to-list 'default-frame-alist '(height . 72))
+(add-to-list 'default-frame-alist '(width . 200))
 
 ;;(tool-bar-mode -1)
 (menu-bar-mode 1)
